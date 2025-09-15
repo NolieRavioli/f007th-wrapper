@@ -13,5 +13,15 @@ sudo rm -f "$SERVICE_PATH"
 echo "Reloading systemd daemon..."
 sudo systemctl daemon-reload
 
-echo "Service removed."
+echo "Removing gpio_ts from /etc/modules..."
+sudo sed -i '/^gpio_ts$/d' /etc/modules
 
+echo "Unloading gpio_ts module (if loaded)..."
+if lsmod | grep -q '^gpio_ts'; then
+    sudo rmmod gpio_ts
+    echo "gpio_ts module unloaded."
+else
+    echo "gpio_ts module not loaded."
+fi
+
+echo "Service removed."
