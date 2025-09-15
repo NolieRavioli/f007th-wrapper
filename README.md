@@ -10,8 +10,29 @@ Using Linux ras4 6.1.21-v8+ #1642 SMP PREEMPT Mon Apr  3 17:24:16 BST 2023 aarch
  - HC-SR501 PIR
  - Inland 5V Relay Module
 
+## Prerequisites
+
+Make a user called `nolan`.
+
+### [gpio-ts](https://github.com/alex-konshin/gpio-ts)
+```sh
+sudo apt update
+sudo apt install -y raspberrypi-kernel-headers build-essential
+```
+
+```sh
+cd ~
+git clone https://github.com/alex-konshin/gpio-ts.git
+cd gpio-ts
+make all
+```
+
+```sh
+sudo insmod gpio-ts.ko gpios=17
+```
+
 ## Installation
-Make a user called `nolan` and do:
+
 ```sh
 cd ~
 git clone https://github.com/NolieRavioli/tempData
@@ -27,6 +48,33 @@ chmod +x ~/tempData/f007th-forwarder.py ~/tempData/f007th-send ~/tempData/rmAuto
 you may remove dataExamples to save a tiny bit of space if you'd like
 ```sh
 rm -r ~/tempData/dataExamples/
+```
+
+### [f007th-send](https://github.com/alex-konshin/f007th-rpi)
+
+the binary is precompiled for 64-bit, if you are running a 32-bit raspberry pi, you can try
+```sh
+cd ~/tempData/
+mv f007th-send f007th-send-64
+mv f007th-send-32 f007th-send
+```
+
+if this doesnt work, you can compile it for your OS:
+
+```sh
+sudo apt-get update
+sudo apt-get install -y libcurl4-openssl-dev libmicrohttpd-dev
+```
+
+```sh
+cd ~
+git clone https://github.com/alex-konshin/f007th-rpi.git
+/bin/bash f007th-rpi/build.sh
+```
+if the build.sh doesnt fail:
+```sh
+mv ~/tempData/f007th-send ~/tempData/f007th-send-64
+mv ~/f007th-rpi/bin/f007th-send ~/tempData/f007th-send
 ```
 
 ## Usage
