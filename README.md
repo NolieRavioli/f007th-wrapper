@@ -1,6 +1,8 @@
 # tempData
 For temp monitoring and heater control using [f007th-send](https://github.com/alex-konshin/f007th-rpi) by `alex-konshin`. 
 
+f007th-send for 64-bit arm.
+
 Using Linux ras4 6.1.21-v8+ #1642 SMP PREEMPT Mon Apr  3 17:24:16 BST 2023 aarch64 GNU/Linux
 
  - Raspberry Pi 4b (1gig)
