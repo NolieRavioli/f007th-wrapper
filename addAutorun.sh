@@ -17,6 +17,14 @@ User=root
 WantedBy=multi-user.target
 EOF
 
+echo "Ensuring gpio-ts autoloads on boot..."
+if ! grep -q '^gpio_ts' /etc/modules; then
+    echo "gpio_ts" | sudo tee -a /etc/modules > /dev/null
+    echo "Added gpio_ts to /etc/modules"
+else
+    echo "gpio_ts already present in /etc/modules"
+fi
+
 echo "Reloading systemd daemon..."
 sudo systemctl daemon-reload
 
