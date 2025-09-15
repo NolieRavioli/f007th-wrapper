@@ -16,6 +16,9 @@ sudo systemctl daemon-reload
 echo "Removing gpio_ts from /etc/modules..."
 sudo sed -i '/^gpio_ts$/d' /etc/modules
 
+echo "Removing gpio-ts modprobe options..."
+sudo rm -f /etc/modprobe.d/gpio_ts.conf
+
 echo "Unloading gpio_ts module (if loaded)..."
 if lsmod | grep -q '^gpio_ts'; then
     sudo rmmod gpio_ts
