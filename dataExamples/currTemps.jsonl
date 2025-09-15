@@ -1,0 +1,8 @@
+{"time": "2025-09-14 18:04:51-0600", "type": "F007TH", "channel": 1, "rolling_code": 107, "temperature": 744, "humidity": 35, "battery_ok": true}
+{"time": "2025-09-14 18:04:16-0600", "type": "F007TH", "channel": 2, "rolling_code": 171, "temperature": 700, "humidity": 41, "battery_ok": true}
+{"time": "2025-09-14 18:04:48-0600", "type": "F007TH", "channel": 3, "rolling_code": 14, "temperature": 723, "humidity": 48, "battery_ok": true}
+{"time": "2025-09-14 18:04:17-0600", "type": "F007TH", "channel": 4, "rolling_code": 245, "temperature": 156, "humidity": 21, "battery_ok": true}
+{"time": "2025-09-14 18:03:50-0600", "type": "F007TH", "channel": 5, "rolling_code": 15, "temperature": 688, "humidity": 41, "battery_ok": true}
+{"time": "2025-09-14 18:04:37-0600", "type": "F007TH", "channel": 6, "rolling_code": 15, "temperature": 893, "humidity": 16, "battery_ok": true}
+{"time": "2025-09-14 18:04:29-0600", "type": "F007TH", "channel": 7, "rolling_code": 74, "temperature": 718, "humidity": 37, "battery_ok": true}
+{"time": "2025-09-14 18:00:34-0600", "type": "F007TH", "channel": 8, "rolling_code": 250, "temperature": 398, "humidity": 44, "battery_ok": true}
