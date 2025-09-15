@@ -1,5 +1,7 @@
 # tempData
-For temp monitoring and control using [f007th-send](https://github.com/alex-konshin/f007th-rpi)
+For temp monitoring and control using [f007th-send](https://github.com/alex-konshin/f007th-rpi) by `alex-konshin`. 
+
+Using raspberry pi 4 on Linux ras4 6.1.21-v8+ #1642 SMP PREEMPT Mon Apr  3 17:24:16 BST 2023 aarch64 GNU/Linux
 
 ## Installation
 Make a user called `nolan` and do:
@@ -10,9 +12,21 @@ mkdir ~/tempData/data
 touch ~/tempData/auth ~/tempData/data/sensor.log
 ```
 
-## Usage
-You can `nano ~/tempData/f007th-forwarder.py` and change the `# ---------------- Config ----------------` section.
+you may have to make the files executable:
+```sh
+chmod +x ~/tempData/f007th-forwarder.py ~/tempData/f007th-send ~/tempData/rmAutorun.sh ~/tempData/addAutorun.sh
+```
 
-if you are sending to a server with an auth token, you can store your auth token by pasting in the file: `nano ~/tempData/auth`.
+you may remove dataExamples to save a tiny bit of space if you'd like
+```sh
+rm -r ~/tempData/dataExamples/
+```
+
+## Usage
+You can `nano ~/tempData/f007th-forwarder.py` and change the `Config` section.
+
+store your auth token by pasting in the file: `nano ~/tempData/auth` if you are sending to a server with an auth token.
 
 run `~/tempData/addAutorun.sh` to make the program start collecting data on boot.
+
+run `~/tempData/rmAutorun.sh` to stop the program from running on boot.
