@@ -34,6 +34,9 @@ make all
 
 ```sh
 sudo insmod gpio-ts.ko gpios=17
+sudo mkdir -p /lib/modules/$(uname -r)/kernel/drivers/gpio/
+sudo cp ~/gpio-ts/gpio-ts.ko /lib/modules/$(uname -r)/kernel/drivers/gpio/
+sudo depmod
 ```
 
 ## Installation
