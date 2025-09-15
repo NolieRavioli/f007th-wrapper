@@ -14,6 +14,11 @@ For temp monitoring and heater control using [f007th-send](https://github.com/al
 
 Make a user called `nolan`.
 
+```sh
+sudo apt-get update
+sudo apt-get install -y python3 libcurl4-openssl-dev libmicrohttpd-dev
+```
+
 ### [gpio-ts](https://github.com/alex-konshin/gpio-ts)
 ```sh
 sudo apt update
@@ -60,11 +65,6 @@ mv f007th-send-32 f007th-send
 ```
 
 if this doesnt work, you can compile it for your OS:
-
-```sh
-sudo apt-get update
-sudo apt-get install -y libcurl4-openssl-dev libmicrohttpd-dev
-```
 
 ```sh
 cd ~
