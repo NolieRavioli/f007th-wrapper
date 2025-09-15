@@ -11,7 +11,7 @@ from datetime import datetime, timezone  # Time parsing and formatting
 # ---------------- Config ----------------
 BASE_DIR = "/home/nolan/tempData"  # Root folder for data and state files
 
-RELAY_CHANNELS = [1,2,3,4,5,6,7,8]  # Expected temperature channels (must all be present & safe)
+RELAY_CHANNELS = [1,2,3,4,5,6,7,8]  # Expected temperature channels (must all be present &amp; safe)
 CONTROL_TEMP = 355       # Tenths of °F: 355 = 35.5°F threshold for "safe"
 RELAY_GPIO = 22          # BCM pin controlling the relay coil
 PIR_GPIO = 27            # BCM pin reading the PIR motion sensor
@@ -37,6 +37,14 @@ def log(msg):
             lf.write(f"{ts} {msg}\n")
     except Exception:
         pass  # Logging must never crash the program
+
+def parse_time(record_time_str):
+    """Convert 'time' string (YYYY-mm-dd HH:MM:SS±ZZZZ) to epoch float; None on failure."""
+    try:
+        dt = datetime.strptime(record_time_str, "%Y-%m-%d %H:%M:%S%z")
+        return dt.timestamp()
+    except Exception:
+        return None
 
 def get_last_sent():
     try:
@@ -81,37 +89,6 @@ GPIO.setup(RELAY_GPIO, GPIO.OUT, initial=GPIO.LOW)       # Relay output pin; sta
 GPIO.setup(PIR_GPIO, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) # PIR input with pull-down resistor
 
 _relay_state = False  # Software-remembered relay state (False=OFF, True=ON) to avoid redundant writes
-
-# ---------------- Occupied (PIR) ----------------
-def read_occupied():
-    """Return expiry epoch if occupied window active; else None. Cleans up stale file."""
-    try:
-        with open(OCCUPIED_FILE, "r") as f:
-            expiry = float(f.read().strip())  # Parse stored epoch seconds
-    except FileNotFoundError:
-        return None  # No occupied window stored
-    except Exception:
-        # If unreadable, remove and treat as not occupied
-        try: os.remove(OCCUPIED_FILE)
-        except Exception: pass
-        return None
-
-    if time.time() > expiry:
-        # Expired: delete marker and return None
-        try: os.remove(OCCUPIED_FILE)
-        except Exception: pass
-        return None
-    return expiry  # Still within the forced-occupied timeout
-
-def set_occupied(hours=PIR_TIMEOUT_HOURS):
-    """Create/update occupied window that forces relay OFF for given hours from now."""
-    expiry = time.time() + hours*3600  # Calculate future epoch
-    try:
-        with open(OCCUPIED_FILE, "w") as f:
-            f.write(str(expiry))       # Persist expiry
-    except Exception:
-        pass
-    log(f"PIR: set occupied until {datetime.fromtimestamp(expiry).isoformat()}")  # Informative log
 
 # ---------------- CURRENT_TEMPS ----------------
 def load_current_temps_dict():
@@ -158,6 +135,42 @@ def update_current_temps(record):
     temps[ch] = stored                 # Replace this channel's latest
     write_current_temps_dict(temps)    # Persist updated snapshot
 
+# ---------------- Occupied (PIR) ----------------
+def read_occupied():
+    """Return expiry epoch if occupied window active; else None. Cleans up stale file."""
+    try:
+        with open(OCCUPIED_FILE, "r") as f:
+            expiry = float(f.read().strip())  # Parse stored epoch seconds
+    except FileNotFoundError:
+        return None  # No occupied window stored
+    except Exception:
+        # If unreadable, remove and treat as not occupied
+        try: os.remove(OCCUPIED_FILE)
+        except Exception: pass
+        return None
+
+    if time.time() &gt; expiry:
+        # Expired: delete marker and return None
+        try: os.remove(OCCUPIED_FILE)
+        except Exception: pass
+        return None
+    return expiry  # Still within the forced-occupied timeout
+
+def set_occupied(hours=PIR_TIMEOUT_HOURS):
+    """Create/update occupied window that forces relay OFF for given hours from now."""
+    expiry = time.time() + hours*3600  # Calculate future epoch
+    try:
+        with open(OCCUPIED_FILE, "w") as f:
+            f.write(str(expiry))       # Persist expiry
+    except Exception:
+        pass
+    log(f"PIR: set occupied until {datetime.fromtimestamp(expiry).isoformat()}")  # Informative log
+
+def occupied_is_active():
+    """Return True if PIR 'occupied' timeout is still active, else False."""
+    return read_occupied() is not None
+
+
 # ---------------- Safety / Relay ----------------
 def relay_write(on):
     """Drive the relay GPIO to desired state with logging; avoid redundant writes."""
@@ -176,14 +189,6 @@ def relay_write(on):
         actual = None  # If GPIO fails, we still log "None"
     log(f"RELAY set to {'ON' if desired else 'OFF'}, actual pin={actual}")
 
-def parse_time(record_time_str):
-    """Convert 'time' string (YYYY-mm-dd HH:MM:SS±ZZZZ) to epoch float; None on failure."""
-    try:
-        dt = datetime.strptime(record_time_str, "%Y-%m-%d %H:%M:%S%z")
-        return dt.timestamp()
-    except Exception:
-        return None
-
 def temps_are_stale(hours=STALE_TEMP_HOURS):
     """Return True if ANY channel is missing or older than cutoff; used to fail-safe OFF."""
     cutoff = time.time() - hours*3600          # Oldest acceptable timestamp
@@ -191,14 +196,14 @@ def temps_are_stale(hours=STALE_TEMP_HOURS):
     for ch in RELAY_CHANNELS:
         r = temps.get(ch)
         if r is None:
-            return True                        # Missing data => stale
+            return True                        # Missing data =&gt; stale
         ts = parse_time(r.get("time"))
-        if ts is None or ts < cutoff:
-            return True                        # Unparseable or too old => stale
+        if ts is None or ts &lt; cutoff:
+            return True                        # Unparseable or too old =&gt; stale
     return False                                # All present and fresh
 
 def all_channels_safe(control_temp=CONTROL_TEMP):
-    """Return True only if every channel temp >= control_temp; else False (fail-safe)."""
+    """Return True only if every channel temp &gt;= control_temp; else False (fail-safe)."""
     temps = load_current_temps_dict()
     for ch in RELAY_CHANNELS:
         r = temps.get(ch)
@@ -208,11 +213,11 @@ def all_channels_safe(control_temp=CONTROL_TEMP):
         temp = r.get("temperature")
         try:
             log(f"Channel {ch} temp={temp} control_temp={control_temp}")  # Trace each comparison
-            if int(temp) < int(control_temp):
+            if int(temp) &lt; int(control_temp):
                 log(f"Channel {ch} below control_temp → NOT safe")
                 return False
         except Exception:
-            return False  # Non-integer or missing temperature => unsafe
+            return False  # Non-integer or missing temperature =&gt; unsafe
     return True  # All channels meet or exceed control temp
 
 def update_relay():
@@ -227,6 +232,13 @@ def update_relay():
         relay_write(False)  # Any channel below threshold forces OFF
         return
     relay_write(True)       # All conditions nominal → turn ON
+
+def relay_is_on():
+    """Return True if relay is ON (coil energized), False otherwise."""
+    try:
+        return GPIO.input(RELAY_GPIO) == GPIO.HIGH
+    except Exception:
+        return False
 
 # ---------------- Network ----------------
 def send_record(record):
@@ -311,7 +323,7 @@ def parse_reading(lines):
             reading["battery_ok"] = val.upper() == "OK"
     return reading  # May be partial if some fields missing
 
-# ---------------- PIR ----------------
+# -------------- PIR interrupt --------------
 def pir_callback(channel):
     """GPIO interrupt handler: extend occupied window, log, and recompute relay state."""
     set_occupied()  # Start/extend timeout from now
@@ -338,6 +350,10 @@ def main():
                 if "battery" in line:    # Heuristic: end of a reading block
                     record = parse_reading(buffer)  # Build record dict
                     buffer = []                      # Reset buffer for next block
+
+                    # Add relay + occupied state fields
+                    record["relay"] = relay_is_on()
+                    record["occupied"] = occupied_is_active()
 
                     try:
                         f.write(json.dumps(record) + "\n")  # Append to DATA_FILE
