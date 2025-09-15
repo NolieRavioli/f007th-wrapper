@@ -1,5 +1,5 @@
 # tempData
-For temp monitoring and control using f007th-send
+For temp monitoring and control using [f007th-send](https://github.com/alex-konshin/f007th-rpi)
 
 ## Installation
 Make a user called `nolan` and do:
