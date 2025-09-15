@@ -1,4 +1,4 @@
-#!/usr/bin/env python3  # Use Python 3 interpreter
+#!/usr/bin/env python3
 import os               # Filesystem paths and file ops
 import sys              # Access stdin for streaming input lines
 import time             # Timestamps, sleeping, epoch math
