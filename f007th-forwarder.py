@@ -16,7 +16,7 @@ CONTROL_TEMP = 355  # Tenths of °F: 355 = 35.5°F threshold for "safe"
 RELAY_GPIO = 22  # BCM pin controlling the relay coil
 PIR_GPIO = 27  # BCM pin reading the PIR motion sensor
 PIR_TIMEOUT_HOURS = 24  # After PIR triggers, force relay OFF for this many hours
-STALE_TEMP_HOURS = 48  # If any channel's latest reading is older than this, force OFF
+STALE_TEMP_HOURS = 5  # If any channel's latest reading is older than this, force OFF
 
 # Files
 DATA_FILE = os.path.join(BASE_DIR, "data", "data.jsonl")  # Append-only raw readings stream (JSONL)
@@ -77,7 +77,7 @@ if not token_data or token_data == 'insert auth token here':
     log('No valid auth token found!')
     AUTH_HEADER = None
 else:
-    AUTH_HEADER = {"Authorization": f"Bearer {token_data}"}
+    AUTH_HEADER = {"Authorization": f"{token_data}"}
 
 # ---------------- Setup ----------------
 for fn in (DATA_FILE, CURRENT_TEMPS):
@@ -257,9 +257,10 @@ def send_record(record):
     """PUT a single reading to the server; True on 2xx, False otherwise."""
     headers = AUTH_HEADER if AUTH_HEADER else {}
     try:
-        r = requests.put(SERVER_URL, headers=headers, json=record, timeout=10)
+        r = requests.put(SERVER_URL, headers=headers, json=record, timeout=8)
         return r.status_code in (200, 201, 202)
-    except Exception:
+    except Exception as e:
+        log(f"send_record failed: {e} payload={record}")
         return False
 
 
